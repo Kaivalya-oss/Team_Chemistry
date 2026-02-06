@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.pkl           # ← optional: exclude large model files
+*.joblib
+
+# Data (large files)
+*.csv           # ← exclude if huge, or keep if small
+*.xlsx
+*.zip
+
+# macOS / Windows junk
+.DS_Store
+Thumbs.db
+
+# Editor junk
+.vscode/
+.idea/
+*.sublime-*
