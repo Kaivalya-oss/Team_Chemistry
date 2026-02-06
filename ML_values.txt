@@ -1,0 +1,36 @@
+linear regression model: 
+Train:
+R2:1.00
+RMSE:0.00
+
+Test:
+R2:1.00
+RMSE:0.00
+
+Untuned: 
+random forest model:
+Train:
+R2:0.990
+RMSE:0.955
+
+Test:
+R2:0.929
+RMSE:2.588
+
+gradient boosting model:
+Train:
+R2: 0.998
+RMSE: 0.424
+
+Test:
+R2:0.973
+RMSE: 1.607
+
+Tuned(Test Set):
+Random Forest Model:
+R2:0.9402
+RMSE:2.3798
+
+Gradient Boosting model:
+R2:0.9832
+RMSE:1.2613

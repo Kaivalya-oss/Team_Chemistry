@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Chemistry Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f7fa;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #2b6cb0;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #718096;
+      font-size: 1.1rem;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: #2d3748;
+    }
+
+    select,
+    button {
+      padding: 12px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    select {
+      width: 100%;
+      max-width: 500px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+    }
+
+    select:hover,
+    select:focus {
+      border-color: #4299e1;
+      outline: none;
+    }
+
+    button {
+      background: #4299e1;
+      color: white;
+      border: none;
+      font-weight: 600;
+      padding: 12px 24px;
+    }
+
+    button:hover:not(:disabled) {
+      background: #3182ce;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+    }
+
+    #resultSection {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s ease;
+    }
+
+    #resultSection.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-cards {
+      display: flex;
+      gap: 24px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 260px;
+      background: #f7fafc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: #4a5568;
+    }
+
+    .score {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .change-positive {
+      color: #38a169;
+    }
+
+    .change-negative {
+      color: #e53e3e;
+    }
+
+    .change-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .change-fill {
+      height: 100%;
+      transition: width 0.8s ease;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #718096;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Team Chemistry Simulator</h1>
+      <p class="subtitle">Predict how a new player impacts your squad's overall chemistry</p>
+    </header>
+
+    <!-- 1. Select Team -->
+    <div class="section">
+      <h2>1. Select Current Team</h2>
+      <select id="currentTeam">
+        <option value="">-- Choose a team --</option>
+        <!-- Populated dynamically -->
+      </select>
+    </div>
+
+    <!-- 2. Add Player -->
+    <div class="section">
+      <h2>2. Add a New Player</h2>
+      <select id="newPlayer" disabled>
+        <option value="">-- First select a team --</option>
+      </select>
+      <button id="simulateBtn" disabled onclick="simulateAddition()">Simulate Addition</button>
+    </div>
+
+    <!-- 3. Result -->
+    <div class="section" id="resultSection">
+      <h2>3. Chemistry Impact</h2>
+      <div class="result-cards">
+        <div class="card">
+          <h3>Before Addition</h3>
+          <div id="beforeScore" class="score">—</div>
+          <p>Chemistry Index</p>
+        </div>
+        <div class="card">
+          <h3>After Addition</h3>
+          <div id="afterScore" class="score">—</div>
+          <p>Chemistry Index</p>
+        </div>
+      </div>
+      <div id="changeInfo" style="margin-top:24px; text-align:center; font-size:1.1rem;">
+        <span id="changeText"></span>
+        <div class="change-bar">
+          <div id="changeFill" class="change-fill" style="width:0%; background:#38a169;"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Built for Team Chemistry Analysis • Data from FIFA dataset
+    </footer>
+  </div>
+
+  <script>
+    // Replace these with real fetched data or your backend
+    const teams = [
+      "FC Barcelona", "Real Madrid", "Manchester City", "Liverpool", "Bayern Munich", "Paris Saint-Germain"
+      // Add more from your teams_for_dashboard.csv
+    ];
+
+    const playersByTeam = {
+      "FC Barcelona": [
+        "L. Messi", "Pedri", "Frenkie de Jong", "R. Araújo", "Gavi", "Ansu Fati"
+      ],
+      "Real Madrid": [
+        "K. Benzema", "V. Júnior", "T. Courtois", "L. Modrić", "F. Mendy", "E. Militão"
+      ],
+      // Add real mappings from your data
+      // In real app → fetch from backend
+    };
+
+    // Populate team dropdown
+    window.onload = () => {
+      const teamSelect = document.getElementById("currentTeam");
+      teams.forEach(team => {
+        const opt = document.createElement("option");
+        opt.value = team;
+        opt.text = team;
+        teamSelect.add(opt);
+      });
+
+      // Enable player dropdown when team is selected
+      teamSelect.onchange = function () {
+        const team = this.value;
+        const playerSelect = document.getElementById("newPlayer");
+        const simBtn = document.getElementById("simulateBtn");
+
+        playerSelect.innerHTML = '<option value="">-- Select Player to Add --</option>';
+        playerSelect.disabled = true;
+        simBtn.disabled = true;
+
+        if (team && playersByTeam[team]) {
+          playersByTeam[team].forEach(player => {
+            const opt = document.createElement("option");
+            opt.value = player;
+            opt.text = player;
+            playerSelect.add(opt);
+          });
+          playerSelect.disabled = false;
+        }
+      };
+
+      // Enable simulate button when player selected
+      document.getElementById("newPlayer").onchange = function () {
+        document.getElementById("simulateBtn").disabled = !this.value;
+      };
+    };
+
+    function simulateAddition() {
+      const team = document.getElementById("currentTeam").value;
+      const player = document.getElementById("newPlayer").value;
+
+      if (!team || !player) return;
+
+      // In real app: send to backend
+      // fetch('/simulate', { method: 'POST', body: JSON.stringify({team, player}) })
+      //   .then(r => r.json()).then(showResult);
+
+      // Demo result
+      const demoBefore = 45.2;
+      const demoAfter = 52.8;
+      const change = demoAfter - demoBefore;
+
+      showResult({
+        team,
+        player_added: player,
+        before_chemistry: demoBefore,
+        after_chemistry: demoAfter,
+        change
+      });
+    }
+
+    function showResult(data) {
+      document.getElementById("beforeScore").textContent = data.before_chemistry.toFixed(1);
+      document.getElementById("afterScore").textContent = data.after_chemistry.toFixed(1);
+
+      const changeEl = document.getElementById("changeText");
+      const fillEl = document.getElementById("changeFill");
+
+      let changeText = `Change: ${data.change > 0 ? '+' : ''}${data.change.toFixed(1)}`;
+      let color = data.change > 0 ? '#38a169' : '#e53e3e';
+      let width = Math.min(Math.abs(data.change) * 4, 100); // max 100% bar
+
+      changeEl.innerHTML = `<span style="color:${color}">${changeText}</span> for <b>${data.player_added}</b>`;
+      fillEl.style.width = `${width}%`;
+      fillEl.style.background = color;
+
+      document.getElementById("resultSection").classList.add("visible");
+    }
+  </script>
+
+</body>
+
+</html>
