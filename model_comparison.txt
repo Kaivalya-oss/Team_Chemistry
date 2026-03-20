@@ -1,0 +1,77 @@
+============================================================
+ PROJECT : Team Chemistry in Football
+ REPORT  : All-Model Comparison
+ MODELS  : Linear Regression | Random Forest | Gradient
+           Boosting | Tuned Random Forest | Hybrid GB+SVR |
+           Hybrid XGBoost+MLP
+ CLASSES : Low (<33) | Medium (33-66) | High (>66)
+============================================================
+
+Three tables are provided:
+  Table 1 – Regression metrics      (RMSE, MAE, R²)
+  Table 2 – Classification metrics  (Precision, Recall, F1, AUC)
+  Table 3 – Per-class accuracy      (Low / Medium / High)
+
+Best values in each column are starred (*) in the notes below
+each table.
+============================================================
+
+==============================================================
+           TABLE 1 – REGRESSION METRICS (Test Set)            
+==============================================================
++------------------------+-----------+-----------+-----------+
+|         Model          |   RMSE    |    MAE    |    R²     |
++------------------------+-----------+-----------+-----------+
+| Linear Regression      |       0.0 |       0.0 |       1.0 |
+| Random Forest          |     2.572 |     1.802 |      0.93 |
+| Gradient Boosting      |     1.607 |     1.056 |     0.973 |
+| Tuned Random Forest    |       2.5 |     1.773 |     0.934 |
+| Hybrid 1: GB + SVR     |     0.972 |     0.628 |      0.99 |
+| Hybrid 2: XGB + MLP    |     0.595 |      0.44 |     0.996 |
++------------------------+-----------+-----------+-----------+
+
+Notes:
+  ★ Best R²          : Linear Regression  (1.0)
+  ★ Best RMSE        : Linear Regression  (0.0)
+  ★ Best MAE         : Linear Regression  (0.0)
+
+
+==========================================================================
+       TABLE 2 – CLASSIFICATION METRICS (Macro-Avg, Binned Classes)       
+==========================================================================
++------------------------+-----------+-----------+-----------+-----------+
+|         Model          | Precision |  Recall   | F1-Score  | Mean AUC  |
++------------------------+-----------+-----------+-----------+-----------+
+| Linear Regression      |       1.0 |       1.0 |       1.0 |       1.0 |
+| Random Forest          |     0.636 |      0.64 |     0.638 |     0.994 |
+| Gradient Boosting      |     0.651 |     0.656 |     0.653 |     0.998 |
+| Tuned Random Forest    |     0.646 |     0.651 |     0.648 |     0.995 |
+| Hybrid 1: GB + SVR     |     0.661 |     0.667 |     0.664 |     0.999 |
+| Hybrid 2: XGB + MLP    |     0.995 |     0.994 |     0.995 |       1.0 |
++------------------------+-----------+-----------+-----------+-----------+
+
+Notes:
+  ★ Best Precision   : Linear Regression  (1.0)
+  ★ Best Recall      : Linear Regression  (1.0)
+  ★ Best F1-Score    : Linear Regression  (1.0)
+  ★ Best Mean AUC    : Linear Regression  (1.0)
+
+
+==============================================================
+TABLE 3 – PER-CLASS ACCURACY  (Low <33 | Medium 33-66 | High >66)
+==============================================================
++------------------------+-----------+-----------+-----------+
+|         Model          |  Acc-Low  |  Acc-Med  | Acc-High  |
++------------------------+-----------+-----------+-----------+
+| Linear Regression      |       1.0 |       1.0 |       1.0 |
+| Random Forest          |     0.972 |     0.948 |       0.0 |
+| Gradient Boosting      |     0.986 |     0.983 |       0.0 |
+| Tuned Random Forest    |     0.986 |     0.966 |       0.0 |
+| Hybrid 1: GB + SVR     |       1.0 |       1.0 |       0.0 |
+| Hybrid 2: XGB + MLP    |       1.0 |     0.983 |       1.0 |
++------------------------+-----------+-----------+-----------+
+
+Notes:
+  ★ Best Acc-Low     : Linear Regression  (1.0)
+  ★ Best Acc-Mid     : Linear Regression  (1.0)
+  ★ Best Acc-High    : Linear Regression  (1.0)

@@ -32,11 +32,9 @@ def simulate_player_swap(team_name: str, remove_player_name: str, add_player_nam
     # --- BEFORE STATE (Current Team) ---
     curr_n = len(current_team)
     curr_age = current_team['Age'].mean()
-    curr_attack = current_team['Attack_Work_Intensity'].mean()
-    curr_defense = current_team['Defense_Work_Intensity'].mean()
     curr_rep = current_team['International Reputation'].mean()
     curr_diversity = current_team['Nationality'].nunique()
-    curr_balance = 1 / (1 + abs(curr_attack - curr_defense))
+    curr_balance = 0.5  # neutral balance (Attack_Work_Intensity/Defense_Work_Intensity not available)
     curr_age_close = 1 - abs(curr_age - 26.5) / current_team['Age'].std() if curr_n > 1 else 0.5
 
     # --- AFTER STATE (Swap) ---
@@ -47,15 +45,16 @@ def simulate_player_swap(team_name: str, remove_player_name: str, add_player_nam
     
     new_n = len(new_team)
     new_age = new_team['Age'].mean()
-    new_attack = new_team['Attack_Work_Intensity'].mean()
-    new_defense = new_team['Defense_Work_Intensity'].mean()
     new_rep = new_team['International Reputation'].mean()
     new_diversity = new_team['Nationality'].nunique()
-    new_balance = 1 / (1 + abs(new_attack - new_defense))
+    new_balance = 0.5  # neutral balance (Attack_Work_Intensity/Defense_Work_Intensity not available)
     new_age_close = 1 - abs(new_age - 26.5) / new_team['Age'].std() if new_n > 1 else 0.5
     
-    # Normalize (MUST match how you trained the model!)
-    norm = lambda v, mn, mx: (v - mn) / (mx - mn) if mx > mn else 0.5
+    # Normalize (MUST match how you trained the model!) and clip to [0, 1]
+    def norm(v, mn, mx):
+        if mx <= mn:
+            return 0.5
+        return float(np.clip((v - mn) / (mx - mn), 0.0, 1.0))
     
     mins = {'div': -1.7074, 'bal': 0.2101, 'rep': -0.4920, 'agec': -28.6977}
     maxs = {'div': 3.2591, 'bal': 0.9967, 'rep': 6.4640, 'agec': -21.2153}
@@ -74,8 +73,8 @@ def simulate_player_swap(team_name: str, remove_player_name: str, add_player_nam
         norm(new_age_close, mins['agec'], maxs['agec'])
     ]).reshape(1, -1)
     
-    before_score = model.predict(before_vec)[0]
-    after_score  = model.predict(after_vec)[0]
+    before_score = float(model.predict(before_vec)[0])
+    after_score  = float(model.predict(after_vec)[0])
     
     return {
         "team": team_name,
